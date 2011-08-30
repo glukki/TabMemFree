@@ -1,0 +1,13 @@
+# IDEA
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Linux
+.*
+!.gitignore
+*~
+
+# KDE
+.directory
