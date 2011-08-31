@@ -1,8 +1,8 @@
 {
-    "name": "ChroMem",
+    "name": "TabMemFree",
     "version": "0.0.1",
 
-    "description": "ChroMem saves your RAM by unloading inactive tabs",
+    "description": "TabMemFree saves your RAM by unloading inactive tabs",
     "icons": {
 //        "16": "img/icon16.png",
 //        "48": "img/icon48.png",
@@ -12,7 +12,7 @@
 
     "browser_action": {
         "default_icon": "img/icon19.png",
-        "default_title": "ChroMem"
+        "default_title": "TabMemFree"
 //        "default_popup": "popup.html"
     },
 
@@ -25,6 +25,5 @@
     "incognito": "split",
     "minimum_chrome_version": "13",
 //    "options_page": "options.html",
-    "permissions": ["chrome://favicon/", "idle", "tabs"],
-    "plugins": []
+    "permissions": ["chrome://favicon/", "idle", "tabs"]
 }
