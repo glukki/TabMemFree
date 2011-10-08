@@ -7,25 +7,92 @@
  */
 
 // Browser Action - block pages from unload - http://code.google.com/chrome/extensions/dev/browserAction.html
+var tabs = {}; // list of tabIDs with inactivity time
+var ticker = null;
+var settings = {};
 
-var maxInactive = 15; //seconds
-var tickTime = 10;
-var exclude = new Array(); //list of url
-var tabs = new Array(); // list of tabIDs with inactivity time
-var timer = null;
+// simple timer - update inactivity time, unload timeouted tabs
+var tick = function(){
+        // get active tab
+        chrome.tabs.getSelected(null, function(tab){
+            // reset current tab time
+            for(var t in tabs){
+                if(t == tab.id){
+                    tabs[tab.id]['time'] = 0;
+                    break;
+                }
+            }
 
+            // increment every tab time
+            for(var t in tabs){
+                tabs[t]['time'] += settings.get('tick');
+            }
 
-// events
+            for(var t in tabs){
+                // find expired
+                if(tabs[t]['time'] > settings.get('timeout')){
+                    var currentId = parseInt(t);
+                    var title = '';
+                    // get original title
+                    chrome.tabs.sendRequest(currentId, {'do':'getTitle'}, function(response){
+                        // save title
+                        for(var t in tabs){
+                            if(t == currentId){
+                                tabs[t]['title'] = response;
+                            }
+                        }
+
+                        // get tab state
+                        chrome.tabs.get(currentId, function(tab){
+                            if(tab.url != chrome.extension.getURL('blank.html')){
+                                // forward tab to blank.html
+                                chrome.tabs.update(
+                                    currentId,
+                                    {'url': chrome.extension.getURL('blank.html'), 'selected': false}
+                                );
+                            }
+                        });
+                    });
+                }
+
+            }
+    });
+};
+
+// init function
+var init = function(){
+// load exclusion list
+    // get all windows with tabs
+    chrome.windows.getAll({"populate": true}, function(wins){
+        // get all tabs, init array with 0 inactive time
+        for(var i=0;i<wins.length;i++){
+            for(var j=0;j<wins[i]['tabs'].length;j++){
+                if(true){
+                    var id = wins[i]['tabs'][j]['id'];
+                    tabs[id] = {'id': id, 'time': 0, 'title':''};
+                }
+            }
+        }
+
+        // bind events
+        ticker = setInterval("tick()", settings.get('tick')*1000);
+        //change icon
+        chrome.browserAction.setIcon({'path':'img/icon19.png'})
+    });
+};
+
+// Events
 // tabs.onCreated - add to list
 chrome.tabs.onCreated.addListener(function(tab){
-    tabs.push({'id': tab['id'], 'time': 0, 'title':''});
+    tabs[tab['id']] = {'id': tab['id'], 'time': 0, 'title':''};
 });
 
 // tabs.onRemoved - load if unloaded, remove from list
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
-    for(var i=0; i<tabs.length; i++){
-        if(tabs[i]['id'] == tabId){
-            delete tabs[i];
+    for(var t in tabs){
+        if(t == tabId){
+            delete tabs[t];
+            break;
         }
     }
 });
@@ -33,66 +100,21 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
 // tabs.onSelectionChanged - load if unloaded, reset inactivity
 chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo){
     chrome.tabs.sendRequest(tabId, {'do':'load'});
+    for(var t in tabs){
+        if(t == tabId){
+            tabs[t]['time'] = 0;
+            break;
+        }
+    }
 });
 
-// simple timer - update inactivity time, unload timeouted tabs
-tick = function(){
-    // get windows
-    chrome.windows.getAll({'populate':false}, function(windows){
-        for(var i=0; i<windows.length; i++){
-            // get active tabs
-            chrome.tabs.getSelected(windows[i]['id'], function(tab){
-                // reset current tab time
-                for(var j=0; j<tabs.length; j++){
-                    if(tabs[j]['id'] == tab.id){
-                        tabs[j]['time'] = 0;
-                    }
-                }
-            });
-        }
-
-        // increment every tab time
-        for(i=0; i<tabs.length; i++){
-            tabs[i]['time'] += tickTime;
-
-            // find expired
-            if(tabs[i]['time'] > maxInactive){
-                var currentId = tabs[i]['id'];
-                var title = '';
-                console.log(currentId, tabs);
-                // get original title
-                chrome.tabs.sendRequest(currentId, {'do':'getTitle'}, function(response){
-                    // save title
-                    for(var i=0; i<tabs.length; i++){
-                        if(tabs[i]['id'] == currentId){
-                            tabs[i]['title'] = response;
-                        }
-                    }
-
-                    // get tab state
-                    chrome.tabs.get(currentId, function(tab){
-                        if(tab.url != chrome.extension.getURL('blank.html')){
-                            // forward tab to blank.html
-                            chrome.tabs.update(
-                                currentId,
-                                {'url': chrome.extension.getURL('blank.html'), 'selected': false}
-                            );
-                        }
-                    });
-                });
-            }
-
-        }
-
-    });
-};
-
+// Messaging
 chrome.extension.onRequest.addListener(
     function(request, sender, sendResponse) {
         if(request['do'] == 'getTitle'){
-            for(var i=0; i<tabs.length; i++){
-                if(tabs[i]['id'] == sender['tab']['id']){
-                    sendResponse(tabs[i]['title']);
+            for(var t in tabs){
+                if(t == sender['tab']['id']){
+                    sendResponse(tabs[t]['title']);
                     break;
                 }
             }
@@ -102,21 +124,34 @@ chrome.extension.onRequest.addListener(
 
 // UI
 chrome.browserAction.onClicked.addListener(function(tab){
-    chrome.tabs.create({'url': chrome.extension.getURL('about.html')});
+    if(ticker){
+        //clear
+        clearInterval(ticker);
+        tabs = new Array();
+        ticker = null;
+        chrome.browserAction.setIcon({'path':'img/icon19_off.png'});
+        settings.set('active', false);
+    } else {
+        settings.set('active', true);
+        init();
+    }
     return false;
 });
 
-// init
-// load exclusion list
-// get all windows with tabs
-chrome.windows.getAll({"populate": true}, function(wins){
-    // get all tabs, init array with 0 inactive time
-    for(var i=0;i<wins.length;i++){
-        for(var j=0;j<wins[i]['tabs'].length;j++){
-            tabs.push({'id': wins[i]['tabs'][j]['id'], 'time': 0, 'title':''});
-        }
-    }
 
-    // bind events
-    timer = setInterval("tick()", tickTime*1000);
-});
+
+// starter
+window.start = function(){
+    settings = new Store('settings',{
+        'active': true,
+        'timeout': 15, // seconds
+        'tick': 5 // seconds
+    });
+
+    if(settings.get('active')){
+        init();
+    } else {
+        chrome.browserAction.setIcon({'path':'img/icon19_off.png'});
+    }
+};
+
