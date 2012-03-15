@@ -8,10 +8,10 @@ this.manifest = {
             "group": " ",
             "name": "timeout",
             "type": "slider",
-            "label": "Timeout",
-            "max": 30*60,
-            "min": 15,
-            "step": 15,
+            "label": "Tab timeout",
+            "max": 24*60*60,
+            "min": 15*60,
+            "step": 15*60,
             "display": true,
             "displayModifier": function(value){
                 return (value/60).floor() + " min.";
@@ -22,10 +22,10 @@ this.manifest = {
             "group": " ",
             "name": "tick",
             "type": "slider",
-            "label": "Tick",
+            "label": "Check period",
             "max": 15*60,
-            "min": 5,
-            "step": 5,
+            "min": 60,
+            "step": 60,
             "display": true,
             "displayModifier": function(value){
                 return (value).floor() + " sec.";

@@ -6,10 +6,10 @@ this.i18n = {
     },
     "search": {
         "en": "Search",
-        "ru": "Search"
+        "ru": "Искать"
     },
     "nothing-found": {
         "en": "No matches were found.",
-        "ru": "No matches were found."
+        "ru": "Совпадений не найдено."
     }
 };
