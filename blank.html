@@ -2,21 +2,29 @@
 <html>
 <head>
     <title></title>
-    <script type="text/javascript" src="blank.js"></script>
     <script type="text/javascript">
-		function getParameterByName(name)
-		{
-		  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-		  var regexS = "[\\?&]" + name + "=([^&#]*)";
-		  var regex = new RegExp(regexS);
-		  var results = regex.exec(window.location.search);
-		  if(results == null)
-		    return "";
-		  else
-		    return decodeURIComponent(results[1].replace(/\+/g, " "));
-		}
+        (function(){
+            //get message for history alteration: back
+            chrome.extension.onRequest.addListener(function(request, sender, sendResponse){
+                if(request['do'] == 'load'){
+                    sendResponse('loaded');
+                    history.back();
+                }
+            });
 
-    	document.title = getParameterByName('oldTitle');
+            //set old title
+            function getParameterByName(name){
+                name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+                var regexS = "[\\?&]" + name + "=([^&#]*)";
+                var regex = new RegExp(regexS);
+                var results = regex.exec(window.location.search);
+                if(results)
+                    return decodeURIComponent(results[1].replace(/\+/g, ' '));
+                return '';
+            }
+
+            document.title = getParameterByName('title');
+        })()
     </script>
 </head>
 <body>
