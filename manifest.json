@@ -1,6 +1,6 @@
 {
     "name": "TabMemFree",
-    "version": "0.1.1",
+    "version": "0.1.2",
 
     "description": "TabMemFree saves your RAM by unloading inactive tabs",
     "icons": {
