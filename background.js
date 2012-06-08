@@ -128,10 +128,8 @@ chrome.browserAction.onClicked.addListener(function(tab){
 window.start = function(){
     settings = new Store('settings',{
         'active': true,
-//        'timeout': 15*60, // seconds
-//        'tick': 60 // seconds
-        'timeout': 60, // seconds
-        'tick': 10 // seconds
+        'timeout': 15*60, // seconds
+        'tick': 60 // seconds
     });
 
     if(settings.get('active')){
