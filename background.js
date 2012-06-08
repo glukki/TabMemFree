@@ -44,11 +44,11 @@ var tick = function(){
 
                         // get tab state
                         chrome.tabs.get(currentId, function(tab){
-                            if(tab.url != chrome.extension.getURL('blank.html')){
+                            if(tab.url != chrome.extension.getURL('blank.html').substring(0, chrome.extension.getURL('blank.html').indexOf('?') - 1)) {
                                 // forward tab to blank.html
                                 chrome.tabs.update(
                                     currentId,
-                                    {'url': chrome.extension.getURL('blank.html'), 'selected': false}
+                                    {'url': chrome.extension.getURL('blank.html?oldTitle=' + tab.title), 'selected': false}
                                 );
                             }
                         });
