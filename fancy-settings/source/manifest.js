@@ -14,7 +14,7 @@ this.manifest = {
             "step": 15*60,
             "display": true,
             "displayModifier": function(value){
-                return (value/60).floor() + " min.";
+                return Math.floor(value/60) + " min.";
             }
         },
         {
@@ -28,7 +28,7 @@ this.manifest = {
             "step": 60,
             "display": true,
             "displayModifier": function(value){
-                return (value).floor() + " sec.";
+                return Math.floor(value/60) + " min.";
             }
         }
     ],
