@@ -18,6 +18,7 @@ this.manifest = {
             }
         },
         {
+            //how often does extension check if any tab should be unloaded
             "tab": "Common",
             "group": " ",
             "name": "tick",
