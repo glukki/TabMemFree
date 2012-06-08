@@ -13,51 +13,61 @@ var settings = {};
 
 // simple timer - update inactivity time, unload timeouted tabs
 var tick = function(){
-        // get active tab
-        chrome.tabs.getSelected(null, function(tab){
-            // reset current tab time
-            for(var t in tabs){
-                if(t == tab.id){
-                    tabs[tab.id]['time'] = 0;
-                    break;
+    //sync
+    chrome.windows.getAll({'poppulate': true}, function(windows){
+        // increment every tab time
+        for(var i in tabs){
+            if(tabs.hasOwnProperty(i)){
+                tabs[i]['time'] += settings.get('tick');
+            }
+        }
+
+        // reset active tabs time
+        for(i in windows){
+            if(windows.hasOwnProperty(i)){
+                for(var j in windows[i].tabs){
+                    if(windows[i].tabs.hasOwnProperty(j) && windows[i].tabs[j].active){
+                        tabs[windows[i].tabs[j].id] = 0;
+                        break;
+                    }
                 }
             }
+        }
 
-            // increment every tab time
-            for(var t in tabs){
-                tabs[t]['time'] += settings.get('tick');
+        // find expired
+        for(i in tabs){
+            if(tabs.hasOwnProperty(i) && tabs[i]['time'] > settings.get('timeout')){
+                var currentId = parseInt(i);
+                var title = '';
+                // get original title
+                chrome.tabs.sendRequest(currentId, {'do':'getTitle'}, function(title){
+                    GetTitleResponse(title, currentId);
+                });
             }
 
-            for(var t in tabs){
-                // find expired
-                if(tabs[t]['time'] > settings.get('timeout')){
-                    var currentId = parseInt(t);
-                    var title = '';
-                    // get original title
-                    chrome.tabs.sendRequest(currentId, {'do':'getTitle'}, function(response){
-                        // save title
-                        for(var t in tabs){
-                            if(t == currentId){
-                                tabs[t]['title'] = response;
-                            }
-                        }
-
-                        // get tab state
-                        chrome.tabs.get(currentId, function(tab){
-                            if(tab.url != chrome.extension.getURL('blank.html').substring(0, chrome.extension.getURL('blank.html').indexOf('?') - 1)) {
-                                // forward tab to blank.html
-                                chrome.tabs.update(
-                                    currentId,
-                                    {'url': chrome.extension.getURL('blank.html?oldTitle=' + tab.title), 'selected': false}
-                                );
-                            }
-                        });
-                    });
-                }
-
-            }
+        }
     });
 };
+
+var GetTitleResponse = function(title, tabId){
+    // save title
+    for(var i in tabs){
+        if(tabs.hasOwnProperty(i) && i == tabId){
+            tabs[i]['title'] = title;
+        }
+    }
+
+    // get tab state
+    chrome.tabs.get(tabId, function(tab){
+        if(tab.url != chrome.extension.getURL('blank.html').substring(0, chrome.extension.getURL('blank.html').indexOf('?') - 1)) {
+            // forward tab to blank.html
+            chrome.tabs.update(
+                tabId,
+                {'url': chrome.extension.getURL('blank.html?oldTitle=' + tab.title), 'selected': false}
+            );
+        }
+    });
+}
 
 // init function
 var init = function(){
@@ -89,9 +99,9 @@ chrome.tabs.onCreated.addListener(function(tab){
 
 // tabs.onRemoved - load if unloaded, remove from list
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
-    for(var t in tabs){
-        if(t == tabId){
-            delete tabs[t];
+    for(var i in tabs){
+        if(tabs.hasOwnProperty(i) && i == tabId){
+            delete tabs[i];
             break;
         }
     }
@@ -100,9 +110,9 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
 // tabs.onSelectionChanged - load if unloaded, reset inactivity
 chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo){
     chrome.tabs.sendRequest(tabId, {'do':'load'});
-    for(var t in tabs){
-        if(t == tabId){
-            tabs[t]['time'] = 0;
+    for(var i in tabs){
+        if(tabs.hasOwnProperty(i) && i == tabId){
+            tabs[i]['time'] = 0;
             break;
         }
     }
@@ -112,9 +122,9 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo){
 chrome.extension.onRequest.addListener(
     function(request, sender, sendResponse) {
         if(request['do'] == 'getTitle'){
-            for(var t in tabs){
-                if(t == sender['tab']['id']){
-                    sendResponse(tabs[t]['title']);
+            for(var i in tabs){
+                if(tabs.hasOwnProperty(i) && i == sender['tab']['id']){
+                    sendResponse(tabs[i]['title']);
                     break;
                 }
             }
