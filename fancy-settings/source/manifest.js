@@ -1,4 +1,3 @@
-// SAMPLE
 this.manifest = {
     "name": "TabMemFree",
     "icon": "../../img/icon30.png",

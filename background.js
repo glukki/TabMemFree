@@ -1,6 +1,6 @@
 /**
  * Created by IntelliJ IDEA.
- * User: glukki
+ * User: Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com
  * Date: 27/08/11
  * Time: 13:32
  * To change this template use File | Settings | File Templates.
@@ -10,7 +10,7 @@
 var tabs = {}; // list of tabIDs with inactivity time
 var ticker = null;
 var settings = {};
-var urlBlank = chrome.extension.getURL('blank.html')
+var urlBlank = 'http://glukki.ru/blank.html';
 
 // simple timer - update inactivity time, unload timeouted tabs
 var tick = function(){
@@ -45,7 +45,7 @@ var tick = function(){
                         // forward tab to blank.html
                         chrome.tabs.update(
                             tab.id,
-                            {'url': urlBlank + '?title=' + tab.title, 'selected': false}
+                            {'url': urlBlank + '?title=' + tab.title + '&icon=' + tab.favIconUrl, 'selected': false}
                         );
                     }
                 });

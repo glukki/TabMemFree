@@ -1,8 +1,8 @@
 {
     "name": "TabMemFree",
-    "version": "0.1.2",
+    "version": "0.1.3",
 
-    "description": "TabMemFree saves your RAM by parking inactive tabs",
+    "description": "Lower RAM and CPU consumption by parking inactive tabs",
     "icons": {
         "16": "img/icon16.png",
         "48": "img/icon48.png",
@@ -16,10 +16,10 @@
     "options_page": "fancy-settings/source/index.html",
     "background_page": "background.html",
     "content_scripts": [{
-        "matches": ["<all_urls>"],
+        "matches": ["http://glukki.ru/blank.html*"],
         "js": ["inject.js"]
     }],
     "incognito": "split",
     "minimum_chrome_version": "13",
-    "permissions": ["chrome://favicon/", "idle", "tabs"]
+    "permissions": ["chrome://favicon/", "tabs"]
 }
