@@ -27,9 +27,13 @@ var tick = function(){
         for(i in windows){
             if(windows.hasOwnProperty(i)){
                 for(var j in windows[i].tabs){
-                    if(windows[i].tabs.hasOwnProperty(j) && windows[i].tabs[j].active){
-                        tabs[windows[i].tabs[j].id]['time'] = 0;
-                        break;
+                    if(windows[i].tabs.hasOwnProperty(j)){
+                        if(windows[i].tabs[j].active){
+                            tabs[windows[i].tabs[j].id]['time'] = 0;
+                        }
+                        if(settings.get('pinned') && windows[i].tabs[j].pinned){
+                            tabs[windows[i].tabs[j].id]['time'] = 0;
+                        }
                     }
                 }
             }
@@ -129,7 +133,8 @@ window.start = function(){
     settings = new Store('settings',{
         'active': true,
         'timeout': 15*60, // seconds
-        'tick': 60 // seconds
+        'tick': 60, // seconds
+        'pinned': true
     });
 
     if(settings.get('active')){
