@@ -10,7 +10,7 @@
 var tabs = {}; // list of tabIDs with inactivity time
 var ticker = null;
 var settings = {};
-var urlBlank = 'http://glukki.ru/blank.html';
+var urlBlank = 'https://tabmemfree.appspot.com/blank.html';
 
 // simple timer - update inactivity time, unload timeouted tabs
 var tick = function(){

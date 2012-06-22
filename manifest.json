@@ -16,7 +16,7 @@
     "options_page": "fancy-settings/source/index.html",
     "background_page": "background.html",
     "content_scripts": [{
-        "matches": ["http://glukki.ru/blank.html*"],
+        "matches": ["https://tabmemfree.appspot.com/blank.html*"],
         "js": ["inject.js"]
     }],
     "incognito": "split",
