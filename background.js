@@ -47,9 +47,13 @@ var tick = function(){
                     //check if parked
                     if(tab.url.substring(0, tab.url.indexOf('?')) != urlBlank) {
                         // forward tab to blank.html
+                        var url = urlBlank + '?title=' + tab.title;
+                        if(tab.favIconUrl){
+                            url += '&icon=' + tab.favIconUrl
+                        }
                         chrome.tabs.update(
                             tab.id,
-                            {'url': urlBlank + '?title=' + tab.title + '&icon=' + tab.favIconUrl, 'selected': false}
+                            {'url': url, 'selected': false}
                         );
                     }
                 });
