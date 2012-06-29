@@ -1,8 +1,8 @@
 {
     "name": "TabMemFree",
-    "version": "0.1.3",
+    "version": "0.1.3.2",
 
-    "description": "Lower RAM and CPU consumption by parking inactive tabs",
+    "description": "Lower RAM and CPU consumption by parking idle tabs",
     "icons": {
         "16": "img/icon16.png",
         "48": "img/icon48.png",
