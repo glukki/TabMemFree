@@ -45,7 +45,7 @@ var tick = function(){
                 // get tab
                 chrome.tabs.get(parseInt(i), function(tab){
                     //check if parked
-                    if(tab.url.substring(0, tab.url.indexOf('?')) != urlBlank) {
+                    if(tab.url.substring(0, tab.url.indexOf('#')) != urlBlank) {
                         // forward tab to blank.html
                         var url = urlBlank + '#title=' + encodeURIComponent(tab.title);
                         if(tab.favIconUrl){
@@ -103,8 +103,13 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
     }
 });
 
-// tabs.onSelectionChanged - reset inactivity
+// tabs.onSelectionChanged - load if unloaded, reset inactivity
 chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo){
+    chrome.tabs.get(tabId, function(tab){
+        if(tab.url.substring(0, tab.url.indexOf('#')) == urlBlank){
+            chrome.tabs.sendRequest(tabId, {'do':'load'});
+        }
+    });
     for(var i in tabs){
         if(tabs.hasOwnProperty(i) && i == tabId){
             tabs[i]['time'] = 0;
@@ -146,4 +151,3 @@ window.start = function(){
         chrome.browserAction.setIcon({'path':'img/icon19_off.png'});
     }
 };
-
