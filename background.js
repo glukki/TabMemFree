@@ -47,9 +47,9 @@ var tick = function(){
                     //check if parked
                     if(tab.url.substring(0, tab.url.indexOf('?')) != urlBlank) {
                         // forward tab to blank.html
-                        var url = urlBlank + '?title=' + tab.title;
+                        var url = urlBlank + '#title=' + encodeURIComponent(tab.title);
                         if(tab.favIconUrl){
-                            url += '&icon=' + tab.favIconUrl
+                            url += '&icon=' + encodeURIComponent(tab.favIconUrl);
                         }
                         chrome.tabs.update(
                             tab.id,
@@ -103,9 +103,8 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
     }
 });
 
-// tabs.onSelectionChanged - load if unloaded, reset inactivity
+// tabs.onSelectionChanged - reset inactivity
 chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo){
-    chrome.tabs.sendRequest(tabId, {'do':'load'});
     for(var i in tabs){
         if(tabs.hasOwnProperty(i) && i == tabId){
             tabs[i]['time'] = 0;
