@@ -118,7 +118,7 @@ chrome.tabs.onCreated.addListener(function (tab) {
 });
 
 // tabs.onRemoved - load if unloaded, remove from list
-chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
+chrome.tabs.onRemoved.addListener(function (tabId) {
     "use strict";
     var i;
     for (i in tabs) {
@@ -130,7 +130,7 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
 });
 
 // tabs.onSelectionChanged - load if unloaded, reset inactivity
-chrome.tabs.onSelectionChanged.addListener(function (tabId, selectInfo) {
+chrome.tabs.onSelectionChanged.addListener(function (tabId) {
     "use strict";
     var i;
     chrome.tabs.get(tabId, function (tab) {
@@ -149,7 +149,7 @@ chrome.tabs.onSelectionChanged.addListener(function (tabId, selectInfo) {
 
 
 // UI
-chrome.browserAction.onClicked.addListener(function (tab) {
+chrome.browserAction.onClicked.addListener(function () {
     "use strict";
     if (ticker) {
         //clear
