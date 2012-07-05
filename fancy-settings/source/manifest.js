@@ -1,6 +1,6 @@
 this.manifest = {
     'name': 'TabMemFree',
-    'icon':'../../img/icon30.png',
+    'icon': '../../img/icon30.png',
     'settings': [
         {
             'tab': 'Settings',
@@ -8,12 +8,13 @@ this.manifest = {
             'name': 'timeout',
             'type': 'slider',
             'label': 'Tab timeout',
-            'max': 24*60*60,
-            'min': 15*60,
-            'step': 15*60,
+            'max': 24 * 60 * 60,
+            'min': 15 * 60,
+            'step': 15 * 60,
             'display': true,
-            'displayModifier': function(value){
-                return Math.floor(value/60) + ' min.';
+            'displayModifier': function (value) {
+                "use strict";
+                return Math.floor(value / 60) + ' min.';
             }
         },
         {
@@ -29,12 +30,13 @@ this.manifest = {
             'name': 'tick',
             'type': 'slider',
             'label': 'Check period',
-            'max': 15*60,
+            'max': 15 * 60,
             'min': 60,
             'step': 60,
             'display': true,
-            'displayModifier': function(value){
-                return Math.floor(value/60) + ' min.';
+            'displayModifier': function (value) {
+                "use strict";
+                return Math.floor(value / 60) + ' min.';
             }
         },
         {
