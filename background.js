@@ -8,19 +8,30 @@
 /*jslint browser: true, devel: true*/
 /*global chrome, Store*/
 
+// constants
 var PARSE_DECIMAL = 10;
+var DEFAULT_SETTINGS = {
+    'active': true,
+    'timeout': 15 * 60, // seconds
+    'tick': 60, // seconds
+    'pinned': true
+};
+var PARK_URL = 'https://tabmemfree.appspot.com/blank.html';
+
+// globals
 var tabs = {}; // list of tabIDs with inactivity time
 var ticker = null;
 var settings = {};
-var urlBlank = 'https://tabmemfree.appspot.com/blank.html';
 
-// repeatedly used functions
+
+
+// park idle tab if it is not parked yet
 function parkTab(tab) {
     "use strict";
     //check if parked
-    if (tab.url.substring(0, tab.url.indexOf('#')) !== urlBlank) {
+    if (tab.url.substring(0, tab.url.indexOf('#')) !== PARK_URL) {
         // forward tab to blank.html
-        var url = urlBlank + '#title=' + encodeURIComponent(tab.title);
+        var url = PARK_URL + '#title=' + encodeURIComponent(tab.title);
         if (tab.favIconUrl) {
             url += '&icon=' + encodeURIComponent(tab.favIconUrl);
         }
@@ -97,6 +108,8 @@ function init() {
     });
 }
 
+
+
 // Events
 // tabs.onCreated - add to list
 chrome.tabs.onCreated.addListener(function (tab) {
@@ -121,7 +134,7 @@ chrome.tabs.onSelectionChanged.addListener(function (tabId, selectInfo) {
     "use strict";
     var i;
     chrome.tabs.get(tabId, function (tab) {
-        if (tab.url.substring(0, tab.url.indexOf('#')) === urlBlank) {
+        if (tab.url.substring(0, tab.url.indexOf('#')) === PARK_URL) {
             chrome.tabs.sendRequest(tabId, {'do': 'load'});
         }
     });
@@ -132,6 +145,8 @@ chrome.tabs.onSelectionChanged.addListener(function (tabId, selectInfo) {
         }
     }
 });
+
+
 
 // UI
 chrome.browserAction.onClicked.addListener(function (tab) {
@@ -155,12 +170,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 // starter
 function start() {
     "use strict";
-    settings = new Store('settings', {
-        'active': true,
-        'timeout': 15 * 60, // seconds
-        'tick': 60, // seconds
-        'pinned': true
-    });
+    settings = new Store('settings', DEFAULT_SETTINGS);
 
     if (settings.get('active')) {
         init();
