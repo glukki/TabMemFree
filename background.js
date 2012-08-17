@@ -12,7 +12,9 @@ var PARSE_DECIMAL = 10;
 var tabs = {}; // list of tabIDs with inactivity time
 var ticker = null;
 var settings = {};
-var urlBlank = 'https://tabmemfree.appspot.com/blank.html';
+var inject_js = location.href.replace("background.html","") + "inject.js";
+var urlBlank = 'data:text/html,<html><head><title></title><script src="' + inject_js + '"></script>'+ 
+               '</head><body><a href="javascript:history.back();">Go back</a></body></html><!--';
 
 // repeatedly used functions
 function parkTab(tab) {
@@ -20,13 +22,14 @@ function parkTab(tab) {
     //check if parked
     if (tab.url.substring(0, tab.url.indexOf('#')) !== urlBlank) {
         // forward tab to blank.html
-        var url = urlBlank + '#title=' + encodeURIComponent(tab.title);
+        var url = urlBlank;
+		var msg = { "title": tab.title };
         if (tab.favIconUrl) {
-            url += '&icon=' + encodeURIComponent(tab.favIconUrl);
+            msg.icon = tab.favIconUrl;
         }
         chrome.tabs.update(
             tab.id,
-            {'url': url, 'selected': false}
+            {'url': url + "#" + encodeURIComponent(JSON.stringify(msg)), 'selected': false}
         );
     }
 }
@@ -120,11 +123,6 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
 chrome.tabs.onSelectionChanged.addListener(function (tabId, selectInfo) {
     "use strict";
     var i;
-    chrome.tabs.get(tabId, function (tab) {
-        if (tab.url.substring(0, tab.url.indexOf('#')) === urlBlank) {
-            chrome.tabs.sendRequest(tabId, {'do': 'load'});
-        }
-    });
     for (i in tabs) {
         if (tabs.hasOwnProperty(i) && i === tabId) {
             tabs[i].time = 0;
@@ -157,8 +155,12 @@ function start() {
     "use strict";
     settings = new Store('settings', {
         'active': true,
-        'timeout': 15 * 60, // seconds
-        'tick': 60, // seconds
+		'timeout': 15 * 60, // seconds
+		'tick': 60, // seconds
+/* for debug
+        'timeout': 20,
+        'tick': 10,
+*/
         'pinned': true
     });
 
