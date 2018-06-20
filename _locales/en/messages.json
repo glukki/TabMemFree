@@ -1,0 +1,14 @@
+{
+  "name": {
+    "message": "TabMemFree"
+  },
+  "description": {
+    "message": "Lower RAM and CPU load by \"parking\" idle tabs"
+  },
+  "title": {
+    "message": "TabMemFree"
+  },
+  "author": {
+    "message": "Vitaliy Meshchaninov"
+  }
+}

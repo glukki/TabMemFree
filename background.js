@@ -179,4 +179,4 @@ function start() {
     }
 }
 
-window.start = start;
+start();

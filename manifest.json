@@ -1,25 +1,34 @@
 {
-    "name": "TabMemFree",
+    "manifest_version": 2,
+    "name": "__MSG_name__",
     "version": "0.1.3.2",
 
-    "description": "Lower RAM and CPU consumption by parking idle tabs",
+    "default_locale": "en",
+    "description": "__MSG_description__",
     "icons": {
         "16": "img/icon16.png",
         "48": "img/icon48.png",
         "128": "img/icon128.png"
     },
+
     "browser_action": {
-        "default_icon": "img/icon19.png",
-        "default_title": "TabMemFree"
+        "default_icon": {
+            "19": "img/icon19.png"
+        },
+        "default_title": "__MSG_title__"
     },
 
-    "options_page": "fancy-settings/source/index.html",
-    "background_page": "background.html",
+    "author": "__MSG_author__",
+    "background": {
+        "scripts": ["fancy-settings/source/lib/store.js", "background.js"]
+    },
     "content_scripts": [{
-        "matches": ["https://tabmemfree.appspot.com/blank.html*"],
+        "matches": ["https://tabmemfree.appspot.com/blank.html"],
         "js": ["inject.js"]
     }],
     "incognito": "split",
-    "minimum_chrome_version": "13",
-    "permissions": ["tabs"]
+    "minimum_chrome_version": "18",
+    "offline_enabled": true,
+    "options_page": "fancy-settings/source/index.html",
+    "permissions": ["tabs", "chrome://favicon/", "storage"]
 }
