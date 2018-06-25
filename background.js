@@ -154,7 +154,7 @@ chrome.browserAction.onClicked.addListener(function () {
     if (ticker) {
         //clear
         clearInterval(ticker);
-        tabs = [];
+        tabs = {};
         ticker = null;
         chrome.browserAction.setIcon({'path': 'img/icon19_off.png'});
         settings.set('active', false);
