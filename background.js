@@ -82,24 +82,19 @@ function init() {
     "use strict";
     // load exclusion list
     // get all windows with tabs
-    chrome.windows.getAll({"populate": true}, function (wins) {
-        var i, j, id;
+    chrome.windows.getAll({populate: true}, function (windows) {
         // get all tabs, init array with 0 inactive time
-        for (i in wins) {
-            if (wins.hasOwnProperty(i)) {
-                for (j in wins[i].tabs) {
-                    if (wins[i].tabs.hasOwnProperty(j)) {
-                        id = wins[i].tabs[j].id;
-                        tabs[id] = {'id': id, 'time': 0};
-                    }
-                }
-            }
-        }
+        windows.forEach(function (window) {
+            window.tabs.forEach(function (tab) {
+                var id = tab.id
+                tabs[id] = {id: id, time: 0}
+            })
+        })
 
         // bind events
         ticker = setInterval(tick, settings.get(SETTING_TICK) * 1000);
         //change icon
-        chrome.browserAction.setIcon({'path': 'img/icon19.png'});
+        chrome.browserAction.setIcon({path: 'img/icon19.png'});
         chrome.browserAction.setTitle({title: chrome.i18n.getMessage("browserActionActive")})
     });
 }
