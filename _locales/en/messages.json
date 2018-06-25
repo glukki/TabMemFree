@@ -10,5 +10,11 @@
   },
   "author": {
     "message": "Vitaliy Meshchaninov"
+  },
+  "browserActionActive": {
+    "message": "TabMemFree is active. Click to inactivate"
+  },
+  "browserActionInactive": {
+    "message": "TabMemFree is inactive. Click to activate"
   }
 }

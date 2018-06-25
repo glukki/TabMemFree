@@ -100,6 +100,7 @@ function init() {
         ticker = setInterval(tick, settings.get(SETTING_TICK) * 1000);
         //change icon
         chrome.browserAction.setIcon({'path': 'img/icon19.png'});
+        chrome.browserAction.setTitle({title: chrome.i18n.getMessage("browserActionActive")})
     });
 }
 
@@ -152,6 +153,7 @@ chrome.browserAction.onClicked.addListener(function () {
         tabs = {};
         ticker = null;
         chrome.browserAction.setIcon({'path': 'img/icon19_off.png'});
+        chrome.browserAction.setTitle({title: chrome.i18n.getMessage("browserActionInactive")})
         settings.set(SETTING_ACTIVE, false);
     } else {
         settings.set(SETTING_ACTIVE, true);
