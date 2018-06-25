@@ -9,7 +9,6 @@
 /*global chrome, Store*/
 
 // constants
-var PARSE_DECIMAL = 10;
 var DEFAULT_SETTINGS = {
     'active': true,
     'timeout': 15 * 60, // seconds
@@ -46,39 +45,31 @@ function parkTab(tab) {
 function tick() {
     "use strict";
     //sync
-    chrome.windows.getAll({'populate': true}, function (windows) {
-        var i, j;
-        // increment every tab time
-        for (i in tabs) {
-            if (tabs.hasOwnProperty(i)) {
-                tabs[i].time += settings.get('tick');
-            }
-        }
-
-        // reset active tabs time
-        for (i in windows) {
-            if (windows.hasOwnProperty(i)) {
-                for (j in windows[i].tabs) {
-                    if (windows[i].tabs.hasOwnProperty(j)) {
-                        if (windows[i].tabs[j].active) {
-                            tabs[windows[i].tabs[j].id].time = 0;
-                        }
-                        if (settings.get('pinned') && windows[i].tabs[j].pinned) {
-                            tabs[windows[i].tabs[j].id].time = 0;
-                        }
-                    }
+    chrome.windows.getAll({populate: true}, function (windows) {
+        // find active or pinned tabs to reset their time
+        var tabsToReset = {}
+        var skipPinned = settings.get('pinned')
+        windows.forEach(function (window) {
+            window.tabs.forEach(function (tab) {
+                if (tab.active || (skipPinned && tab.pinned)) {
+                    tabsToReset[tab.id] = true;
                 }
-            }
-        }
+            })
+        })
 
-        // find expired
-        for (i in tabs) {
-            if (tabs.hasOwnProperty(i) && tabs[i].time >= settings.get('timeout')) {
-                // get tab
-                chrome.tabs.get(parseInt(i, PARSE_DECIMAL), parkTab);
+        // tick and find expired
+        var tickTime = settings.get('tick')
+        var tabTimeout = settings.get('timeout')
+        Object.keys(tabs).forEach(function (tabId) {
+            if(tabsToReset[tabId]){
+                return tabs[tabId].time = 0
             }
 
-        }
+            tabs[tabId].time += tickTime
+            if (tabs[tabId].time >= tabTimeout) {
+                chrome.tabs.get(tabs[tabId].id, parkTab)
+            }
+        })
     });
 }
 
