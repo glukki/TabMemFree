@@ -9,11 +9,15 @@
 /*global chrome, Store*/
 
 // constants
+var SETTING_ACTIVE = 'active'
+var SETTING_TIMEOUT = 'timeout'
+var SETTING_TICK = 'tick'
+var SETTING_PINNED = 'pinned'
 var DEFAULT_SETTINGS = {
-    'active': true,
-    'timeout': 15 * 60, // seconds
-    'tick': 60, // seconds
-    'pinned': true
+    [SETTING_ACTIVE]: true,
+    [SETTING_TIMEOUT]: 15 * 60, // seconds
+    [SETTING_TICK]: 60, // seconds
+    [SETTING_PINNED]: true
 };
 var PARK_URL = 'https://tabmemfree.appspot.com/blank.html';
 
@@ -48,7 +52,7 @@ function tick() {
     chrome.windows.getAll({populate: true}, function (windows) {
         // find active or pinned tabs to reset their time
         var tabsToReset = {}
-        var skipPinned = settings.get('pinned')
+        var skipPinned = settings.get(SETTING_PINNED)
         windows.forEach(function (window) {
             window.tabs.forEach(function (tab) {
                 if (tab.active || (skipPinned && tab.pinned)) {
@@ -58,8 +62,8 @@ function tick() {
         })
 
         // tick and find expired
-        var tickTime = settings.get('tick')
-        var tabTimeout = settings.get('timeout')
+        var tickTime = settings.get(SETTING_TICK)
+        var tabTimeout = settings.get(SETTING_TIMEOUT)
         Object.keys(tabs).forEach(function (tabId) {
             if(tabsToReset[tabId]){
                 return tabs[tabId].time = 0
@@ -93,7 +97,7 @@ function init() {
         }
 
         // bind events
-        ticker = setInterval(tick, settings.get('tick') * 1000);
+        ticker = setInterval(tick, settings.get(SETTING_TICK) * 1000);
         //change icon
         chrome.browserAction.setIcon({'path': 'img/icon19.png'});
     });
@@ -148,9 +152,9 @@ chrome.browserAction.onClicked.addListener(function () {
         tabs = {};
         ticker = null;
         chrome.browserAction.setIcon({'path': 'img/icon19_off.png'});
-        settings.set('active', false);
+        settings.set(SETTING_ACTIVE, false);
     } else {
-        settings.set('active', true);
+        settings.set(SETTING_ACTIVE, true);
         init();
     }
     return false;
@@ -163,7 +167,7 @@ function start() {
     "use strict";
     settings = new Store('settings', DEFAULT_SETTINGS);
 
-    if (settings.get('active')) {
+    if (settings.get(SETTING_ACTIVE)) {
         init();
     } else {
         chrome.browserAction.setIcon({'path': 'img/icon19_off.png'});
