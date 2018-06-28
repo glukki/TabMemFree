@@ -7,14 +7,9 @@ threadsafe: true
 default_expiration: "7d"
 
 handlers:
-- url: /blank\.html
-  static_files: blank.html
-  upload: blank.html
-
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon.ico
-
+- url: /.*
+	static_dir: public
+	
 skip_files:
 - ^(.*/)?app\.yaml
 - ^(.*/)?app\.yml
