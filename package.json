@@ -1,0 +1,30 @@
+{
+  "name": "TabMemFree",
+  "version": "0.1.4",
+  "description": "TabMemFree is a Chrome extension that reduce CPU/MEM load by \"parking\" inactive tabs",
+  "scripts": {
+    "ext:build": "npm run ext:build:cleanup && npm run ext:build:static && npm run ext:build:dynamic && npm run ext:build:version",
+    "ext:build:cleanup": "cd extension/ && rm -R build; mkdir -p build; mkdir -p release",
+    "ext:build:static": "cd extension/ && cp -R skeleton/* build",
+    "ext:build:version": "cd extension/build && dot-json manifest.json version $npm_package_version",
+    "ext:build:dynamic": "npm run ext:build:dynamic:background && npm run ext:build:dynamic:inject",
+    "ext:build:dynamic:background": "cd extension/ && rollup src/background.js --file build/background.js --format iife",
+    "ext:build:dynamic:inject": "cd extension/ && rollup src/inject.js --file build/inject.js --format iife",
+    "ext:release": "npm run ext:build && cd extension/build && jszip -o \"../release/$npm_package_name-$npm_package_version.zip\" ./*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glukki/TabMemFree.git"
+  },
+  "author": "Vitaliy (glukki) Meshchaninov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/glukki/TabMemFree/issues"
+  },
+  "homepage": "https://github.com/glukki/TabMemFree",
+  "devDependencies": {
+    "dot-json": "^1.0.4",
+    "jszip-cli": "^1.4.24",
+    "rollup": "^0.62.0"
+  }
+}

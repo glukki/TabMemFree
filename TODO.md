@@ -1,5 +1,4 @@
 TODO:
-- build automation
 - prettier
 - track extension version with google analytics
 - store settings in chrome.storage - http://developer.chrome.com/extensions/storage
