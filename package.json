@@ -10,7 +10,8 @@
     "ext:build:dynamic": "npm run ext:build:dynamic:background && npm run ext:build:dynamic:inject",
     "ext:build:dynamic:background": "cd extension/ && rollup src/background.js --file build/background.js --format iife",
     "ext:build:dynamic:inject": "cd extension/ && rollup src/inject.js --file build/inject.js --format iife",
-    "ext:release": "npm run ext:build && cd extension/build && jszip -o \"../release/$npm_package_name-$npm_package_version.zip\" ./*"
+    "ext:release": "npm run ext:build && cd extension/build && jszip -o \"../release/$npm_package_name-$npm_package_version.zip\" ./*",
+    "precommit": "pretty-quick --staged"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,10 @@
   "homepage": "https://github.com/glukki/TabMemFree",
   "devDependencies": {
     "dot-json": "^1.0.4",
+    "husky": "^0.14.3",
     "jszip-cli": "^1.4.24",
+    "prettier": "1.13.7",
+    "pretty-quick": "^1.6.0",
     "rollup": "^0.62.0"
   }
 }

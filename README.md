@@ -1,5 +1,4 @@
-TabMemFree
-----
+## TabMemFree
 
 TabMemFree — is a Chrome extension that lowers RAM/CPU load by "parking" inactive tabs.
 
