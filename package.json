@@ -11,7 +11,9 @@
     "ext:build:dynamic:background": "cd extension/ && rollup src/background.js --file build/background.js --format iife",
     "ext:build:dynamic:inject": "cd extension/ && rollup src/inject.js --file build/inject.js --format iife",
     "ext:release": "npm run ext:build && cd extension/build && jszip -o \"../release/$npm_package_name-$npm_package_version.zip\" ./*",
-    "precommit": "pretty-quick --staged"
+    "prepush": "npm run test:eslint",
+    "precommit": "pretty-quick --staged",
+    "test:eslint": "eslint --format=node_modules/eslint-formatter-pretty ."
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,12 @@
   "homepage": "https://github.com/glukki/TabMemFree",
   "devDependencies": {
     "dot-json": "^1.0.4",
+    "eslint": "^5.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-formatter-pretty": "^1.3.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-prettier": "^2.6.2",
+    "eslint-plugin-promise": "^3.8.0",
     "husky": "^0.14.3",
     "jszip-cli": "^1.4.24",
     "prettier": "1.13.7",

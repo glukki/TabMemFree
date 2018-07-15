@@ -1,0 +1,6 @@
+# Created by .ignore support plugin (hsz.mobi)
+docs
+extension/build
+extension/release
+extension/skeleton/fancy-settings
+node_modules
