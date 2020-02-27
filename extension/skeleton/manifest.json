@@ -22,15 +22,8 @@
   "background": {
     "scripts": ["fancy-settings/source/lib/store.js", "background.js"]
   },
-  "content_scripts": [
-    {
-      "matches": ["https://tabmemfree.appspot.com/blank.html"],
-      "js": ["inject.js"]
-    }
-  ],
   "incognito": "split",
   "minimum_chrome_version": "18",
   "offline_enabled": true,
-  "options_page": "fancy-settings/source/index.html",
-  "permissions": ["tabs", "chrome://favicon/"]
+  "options_page": "fancy-settings/source/index.html"
 }
