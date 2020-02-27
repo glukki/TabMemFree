@@ -113,25 +113,25 @@ async function setExtensionState(newState) {
 
 // Events
 // tabs.onCreated - add to list
-chrome.tabs.onCreated.addListener(function(tab) {
+chrome.tabs.onCreated.addListener(tab => {
   console.debug("Tab created:", tab.id);
   tabs[tab.id] = { id: tab.id, time: 0 };
 });
 
 // tabs.onRemoved - load if unloaded, remove from list
-chrome.tabs.onRemoved.addListener(function(tabId) {
+chrome.tabs.onRemoved.addListener(tabId => {
   console.debug("Tab removed:", tabId);
   delete tabs[tabId];
 });
 
 // tabs.onSelectionChanged - load if unloaded, reset inactivity
-chrome.tabs.onSelectionChanged.addListener(function(tabId) {
+chrome.tabs.onSelectionChanged.addListener(tabId => {
   console.debug("Tab activated:", tabId);
   tabs[tabId] = { id: tabId, time: 0 };
 });
 
 // UI
-chrome.browserAction.onClicked.addListener(async function() {
+chrome.browserAction.onClicked.addListener(async () => {
   console.debug("Extension icon clicked");
 
   const { [SETTING_ACTIVE]: isActive } = await store.get(SETTING_ACTIVE);
