@@ -3,11 +3,11 @@
 import { Store } from "./store.js";
 
 // constants
-var SETTING_ACTIVE = "active";
-var SETTING_TIMEOUT = "timeout";
-var SETTING_TICK = "tick";
-var SETTING_PINNED = "pinned";
-var DEFAULT_SETTINGS = {
+const SETTING_ACTIVE = "active";
+const SETTING_TIMEOUT = "timeout";
+const SETTING_TICK = "tick";
+const SETTING_PINNED = "pinned";
+const DEFAULT_SETTINGS = {
   [SETTING_ACTIVE]: true,
   [SETTING_TIMEOUT]: 15 * 60, // seconds
   [SETTING_TICK]: 60, // seconds
@@ -16,9 +16,9 @@ var DEFAULT_SETTINGS = {
 const TABS_QUERY = { discarded: false, autoDiscardable: true };
 
 // globals
-var tabs = {}; // list of tabIDs with inactivity time
+let tabs = {}; // list of tabIDs with inactivity time
 let ticker = null;
-let store = null;
+const store = new Store(DEFAULT_SETTINGS);
 
 // park idle tab if it is not parked yet
 function parkTab(tabId) {
@@ -145,7 +145,6 @@ chrome.browserAction.onClicked.addListener(async function() {
 async function start() {
   console.debug("Extension started");
 
-  store = new Store(DEFAULT_SETTINGS);
   await store.ready();
 
   const { [SETTING_ACTIVE]: isActive } = await store.get(SETTING_ACTIVE);
