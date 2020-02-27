@@ -32,5 +32,5 @@
   "minimum_chrome_version": "18",
   "offline_enabled": true,
   "options_page": "fancy-settings/source/index.html",
-  "permissions": ["tabs", "chrome://favicon/", "storage"]
+  "permissions": ["tabs", "chrome://favicon/"]
 }
