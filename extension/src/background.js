@@ -16,13 +16,13 @@ const DEFAULT_SETTINGS = {
 const TABS_QUERY = { discarded: false, autoDiscardable: true };
 
 // globals
-let tabs = {}; // list of tabIDs with inactivity time
-let ticker = null;
 const store = new Store(DEFAULT_SETTINGS);
+const tabsIdle = new Map(); // key: tabId, value: idle time
+let ticker = null;
 
 // park idle tab if it is not parked yet
 function parkTab(tabId) {
-  delete tabs[tabId];
+  tabsIdle.delete(tabId);
 
   chrome.tabs.discard(tabId, tab => {
     if (chrome.runtime.lastError) {
@@ -48,29 +48,30 @@ async function tick() {
 
   ticker = setTimeout(tick, tickTime * 1000);
 
-  chrome.tabs.query(TABS_QUERY, async fetchedTabs => {
+  chrome.tabs.query(TABS_QUERY, async tabs => {
     // find active or pinned tabs to reset their time
     const activeTabs = new Set();
-    fetchedTabs.forEach(tab => {
+    tabs.forEach(tab => {
       if (tab.active || (skipPinned && tab.pinned)) {
         activeTabs.add(tab.id);
       }
     });
 
     // tick and find expired
-    Object.keys(tabs).forEach(key => {
-      const tab = tabs[key];
-
-      const tabId = tab.id;
+    for (const [tabId, idleTime] of tabsIdle.entries()) {
       if (activeTabs.has(tabId)) {
-        return (tabs[tabId].time = 0);
+        tabsIdle.set(tabId, 0);
+        continue;
       }
 
-      tabs[tabId].time += tickTime;
-      if (tabs[tabId].time >= tabTimeout) {
-        parkTab(tabId);
+      const newTime = idleTime + tickTime;
+      if (newTime < tabTimeout) {
+        tabsIdle.set(tabId, newTime);
+        continue;
       }
-    });
+
+      parkTab(tabId);
+    }
   });
 }
 
@@ -83,7 +84,7 @@ async function setExtensionState(newState) {
     }
 
     ticker = null;
-    tabs = {};
+    tabsIdle.clear();
 
     // set icon
     chrome.browserAction.setIcon({ path: "img/icon19_off.png" });
@@ -95,10 +96,8 @@ async function setExtensionState(newState) {
   }
 
   // get all tabs
-  chrome.tabs.query(TABS_QUERY, fetchedTabs => {
-    fetchedTabs.forEach(tab => {
-      tabs[tab.id] = { id: tab.id, time: 0 };
-    });
+  chrome.tabs.query(TABS_QUERY, tabs => {
+    tabs.forEach(tab => tabsIdle.set(tab.id, 0));
   });
 
   // set icon
@@ -115,19 +114,19 @@ async function setExtensionState(newState) {
 // tabs.onCreated - add to list
 chrome.tabs.onCreated.addListener(tab => {
   console.debug("Tab created:", tab.id);
-  tabs[tab.id] = { id: tab.id, time: 0 };
+  tabsIdle.set(tab.id, 0);
 });
 
 // tabs.onRemoved - load if unloaded, remove from list
 chrome.tabs.onRemoved.addListener(tabId => {
   console.debug("Tab removed:", tabId);
-  delete tabs[tabId];
+  tabsIdle.delete(tabId);
 });
 
 // tabs.onSelectionChanged - load if unloaded, reset inactivity
 chrome.tabs.onSelectionChanged.addListener(tabId => {
   console.debug("Tab activated:", tabId);
-  tabs[tabId] = { id: tabId, time: 0 };
+  tabsIdle.set(tabId, 0);
 });
 
 // UI
