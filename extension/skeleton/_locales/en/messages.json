@@ -3,7 +3,7 @@
     "message": "TabMemFree"
   },
   "description": {
-    "message": "Lower RAM and CPU load by \"parking\" idle tabs"
+    "message": "Lower RAM and CPU load by unloading idle tabs"
   },
   "title": {
     "message": "TabMemFree"
@@ -12,7 +12,7 @@
     "message": "Vitaliy Meshchaninov"
   },
   "browserActionActive": {
-    "message": "TabMemFree is active. Click to inactivate"
+    "message": "TabMemFree is active. Click to deactivate"
   },
   "browserActionInactive": {
     "message": "TabMemFree is inactive. Click to activate"
