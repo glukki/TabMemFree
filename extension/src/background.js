@@ -17,7 +17,7 @@ const TABS_QUERY = { discarded: false, autoDiscardable: true };
 
 // globals
 var tabs = {}; // list of tabIDs with inactivity time
-var ticker = null;
+let ticker = null;
 let store = null;
 
 // park idle tab if it is not parked yet
@@ -74,17 +74,34 @@ async function tick() {
   });
 }
 
-// init function
-async function init() {
-  // load exclusion list
-  // get all windows with tabs
+async function setExtensionState(newState) {
+  await store.set({ [SETTING_ACTIVE]: newState });
+
+  if (!newState) {
+    if (ticker) {
+      clearTimeout(ticker);
+    }
+
+    ticker = null;
+    tabs = {};
+
+    // set icon
+    chrome.browserAction.setIcon({ path: "img/icon19_off.png" });
+    chrome.browserAction.setTitle({
+      title: chrome.i18n.getMessage("browserActionInactive")
+    });
+
+    return;
+  }
+
+  // get all tabs
   chrome.tabs.query(TABS_QUERY, fetchedTabs => {
     fetchedTabs.forEach(tab => {
       tabs[tab.id] = { id: tab.id, time: 0 };
     });
   });
 
-  //change icon
+  // set icon
   chrome.browserAction.setIcon({ path: "img/icon19.png" });
   chrome.browserAction.setTitle({
     title: chrome.i18n.getMessage("browserActionActive")
@@ -117,35 +134,22 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId) {
 chrome.browserAction.onClicked.addListener(async function() {
   console.debug("Extension icon clicked");
 
-  if (ticker) {
-    //clear
-    clearTimeout(ticker);
-    tabs = {};
-    ticker = null;
-    chrome.browserAction.setIcon({ path: "img/icon19_off.png" });
-    chrome.browserAction.setTitle({
-      title: chrome.i18n.getMessage("browserActionInactive")
-    });
-    await store.set({ [SETTING_ACTIVE]: false });
-  } else {
-    await store.set({ [SETTING_ACTIVE]: true });
-    init();
-  }
+  const { [SETTING_ACTIVE]: isActive } = await store.get(SETTING_ACTIVE);
+
+  await setExtensionState(!isActive);
 
   return false;
 });
 
 // starter
 async function start() {
+  console.debug("Extension started");
+
   store = new Store(DEFAULT_SETTINGS);
   await store.ready();
 
   const { [SETTING_ACTIVE]: isActive } = await store.get(SETTING_ACTIVE);
-  if (!isActive) {
-    return chrome.browserAction.setIcon({ path: "img/icon19_off.png" });
-  }
-
-  init();
+  await setExtensionState(isActive);
 }
 
 start();
