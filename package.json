@@ -1,6 +1,6 @@
 {
   "name": "TabMemFree",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "TabMemFree is a Chrome extension that reduce CPU/MEM load by \"parking\" inactive tabs",
   "scripts": {
     "ext:build": "npm run ext:build:cleanup && npm run ext:build:static && npm run ext:build:dynamic && npm run ext:build:version",
