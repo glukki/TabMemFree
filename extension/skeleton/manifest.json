@@ -25,8 +25,5 @@
   "incognito": "split",
   "minimum_chrome_version": "54",
   "offline_enabled": true,
-  "options_page": "fancy-settings/source/index.html",
-  "sandbox": {
-    "pages": ["fancy-settings/source/index.html"]
-  }
+  "options_page": "fancy-settings/source/index.html"
 }
