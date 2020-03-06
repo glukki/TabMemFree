@@ -24,6 +24,8 @@
   },
   "homepage": "https://github.com/glukki/TabMemFree",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
     "dot-json": "^1.0.4",
     "eslint": "^5.1.0",
     "eslint-config-prettier": "^2.9.0",
