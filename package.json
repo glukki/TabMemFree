@@ -35,6 +35,6 @@
     "jszip-cli": "^1.4.24",
     "prettier": "1.13.7",
     "pretty-quick": "^1.6.0",
-    "rollup": "^0.62.0"
+    "rollup": "^2.0.0"
   }
 }
