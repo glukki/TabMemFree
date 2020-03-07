@@ -6,7 +6,7 @@
 (function() {
   var settings, Bundle;
 
-  settings = new Store("settings");
+  settings = new Store.Store("settings");
   Bundle = new Class({
     // Attributes:
     // - tab

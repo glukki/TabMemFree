@@ -1,6 +1,8 @@
 /*jslint browser: true, devel: true*/
-/*global chrome, Store*/
+/*global chrome*/
 /* eslint no-console: ["error", { allow: ["debug"] }] */
+
+import { Store } from "./store-old.js";
 
 // constants
 var SETTING_ACTIVE = "active";

@@ -20,7 +20,7 @@
 
   "author": "__MSG_author__",
   "background": {
-    "scripts": ["store.js", "background.js"]
+    "scripts": ["background.js"]
   },
   "incognito": "split",
   "minimum_chrome_version": "54",
