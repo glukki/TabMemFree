@@ -1,10 +1,9 @@
-window.addEvent("domready", function () {
-    // Option 1: Use the manifest:
-    new FancySettings.initWithManifest(function (settings) {
-    });
-    
-    // Option 2: Do everything manually:
-    /*
+window.addEvent("domready", function() {
+  // Option 1: Use the manifest:
+  new FancySettings.initWithManifest(function(settings) {});
+
+  // Option 2: Do everything manually:
+  /*
     var settings = new FancySettings("My Extension", "icon.png");
     
     var username = settings.create({

@@ -1,7 +1,9 @@
 # [Fancy Settings 1.2](https://github.com/frankkohlhepp/fancy-settings)
-*Create fancy, chrome-look-alike settings for your Chrome or Safari extension in minutes!*
+
+_Create fancy, chrome-look-alike settings for your Chrome or Safari extension in minutes!_
 
 ### Howto
+
 Welcome to Fancy Settings! Are you ready for tabs, groups, search, good style?  
 Let's get started, it only takes a few minutes...
 
@@ -9,5 +11,6 @@ Let's get started, it only takes a few minutes...
 [View Sample](http://frankkohlhepp.github.com/fancy-settings/)
 
 ### License
+
 Fancy Settings is licensed under the **LGPL 2.1**.  
-For details see *LICENSE.txt*
+For details see _LICENSE.txt_

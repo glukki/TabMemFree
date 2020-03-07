@@ -20,10 +20,11 @@
 
   "author": "__MSG_author__",
   "background": {
-    "scripts": ["fancy-settings/source/lib/store.js", "background.js"]
+    "scripts": ["background.js"]
   },
   "incognito": "split",
   "minimum_chrome_version": "54",
   "offline_enabled": true,
-  "options_page": "fancy-settings/source/index.html"
+  "options_page": "fancy-settings/source/index.html",
+  "permissions": ["storage"]
 }
