@@ -20,7 +20,7 @@ const TABS_QUERY = { discarded: false, autoDiscardable: true };
 // globals
 var tabs = {}; // list of tabIDs with inactivity time
 var ticker = null;
-var settings = {};
+var store = {};
 
 // park idle tab if it is not parked yet
 function parkTab(tabId) {
@@ -42,11 +42,11 @@ function parkTab(tabId) {
 // simple timer - update inactivity time, unload timeouted tabs
 function tick() {
   console.debug("tick");
-  ticker = setTimeout(tick, settings.get(SETTING_TICK) * 1000);
+  ticker = setTimeout(tick, store.get(SETTING_TICK) * 1000);
 
   chrome.tabs.query(TABS_QUERY, fetchedTabs => {
     // find active or pinned tabs to reset their time
-    const skipPinned = settings.get(SETTING_PINNED);
+    const skipPinned = store.get(SETTING_PINNED);
 
     const activeTabs = new Set();
     fetchedTabs.forEach(tab => {
@@ -56,8 +56,8 @@ function tick() {
     });
 
     // tick and find expired
-    const tickTime = settings.get(SETTING_TICK);
-    const tabTimeout = settings.get(SETTING_TIMEOUT);
+    const tickTime = store.get(SETTING_TICK);
+    const tabTimeout = store.get(SETTING_TIMEOUT);
     Object.keys(tabs).forEach(key => {
       const tab = tabs[key];
 
@@ -90,7 +90,7 @@ function init() {
     title: chrome.i18n.getMessage("browserActionActive")
   });
 
-  ticker = setTimeout(tick, settings.get(SETTING_TICK) * 1000);
+  ticker = setTimeout(tick, store.get(SETTING_TICK) * 1000);
 }
 
 // Events
@@ -125,9 +125,9 @@ chrome.browserAction.onClicked.addListener(function() {
     chrome.browserAction.setTitle({
       title: chrome.i18n.getMessage("browserActionInactive")
     });
-    settings.set(SETTING_ACTIVE, false);
+    store.set(SETTING_ACTIVE, false);
   } else {
-    settings.set(SETTING_ACTIVE, true);
+    store.set(SETTING_ACTIVE, true);
     init();
   }
 
@@ -136,9 +136,9 @@ chrome.browserAction.onClicked.addListener(function() {
 
 // starter
 function start() {
-  settings = new Store("settings", DEFAULT_SETTINGS);
+  store = new Store("settings", DEFAULT_SETTINGS);
 
-  if (settings.get(SETTING_ACTIVE)) {
+  if (store.get(SETTING_ACTIVE)) {
     init();
   } else {
     chrome.browserAction.setIcon({ path: "img/icon19_off.png" });
