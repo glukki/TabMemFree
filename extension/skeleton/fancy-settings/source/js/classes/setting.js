@@ -33,7 +33,9 @@
       this.addEvents();
 
       if (this.params.name !== undefined) {
-        this.set(settings.get(this.params.name), true);
+        settings.get(this.params.name).then(({ [this.params.name]: val }) => {
+          this.set(val, true);
+        });
       }
 
       this.params.searchString = this.params.searchString.toLowerCase();
@@ -42,9 +44,9 @@
     addEvents: function() {
       this.element.addEvent(
         "change",
-        function(event) {
+        async function(event) {
           if (this.params.name !== undefined) {
-            settings.set(this.params.name, this.get());
+            await settings.set({ [this.params.name]: this.get() });
           }
 
           this.fireEvent("action", this.get());
@@ -216,9 +218,9 @@
     },
 
     addEvents: function() {
-      var change = function(event) {
+      var change = async function(event) {
         if (this.params.name !== undefined) {
-          settings.set(this.params.name, this.get());
+          await settings.set({ [this.params.name]: this.get() });
         }
 
         this.fireEvent("action", this.get());
@@ -297,7 +299,9 @@
       this.addEvents();
 
       if (this.params.name !== undefined) {
-        this.set(settings.get(this.params.name) || 0, true);
+        settings.get(this.params.name).then(({ [this.params.name]: val }) => {
+          this.set(val || 0, true);
+        });
       } else {
         this.set(0, true);
       }
@@ -362,9 +366,9 @@
     addEvents: function() {
       this.element.addEvent(
         "change",
-        function(event) {
+        async function(event) {
           if (this.params.name !== undefined) {
-            settings.set(this.params.name, this.get());
+            await settings.set({ [this.params.name]: this.get() });
           }
 
           if (this.params.displayModifier !== undefined) {
@@ -560,9 +564,9 @@
     addEvents: function() {
       this.bundle.addEvent(
         "change",
-        function(event) {
+        async function(event) {
           if (this.params.name !== undefined) {
-            settings.set(this.params.name, this.get());
+            await settings.set({ [this.params.name]: this.get() });
           }
 
           this.fireEvent("action", this.get());

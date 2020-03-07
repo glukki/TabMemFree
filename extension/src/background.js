@@ -2,7 +2,7 @@
 /*global chrome*/
 /* eslint no-console: ["error", { allow: ["debug"] }] */
 
-import { Store } from "./store-old.js";
+import { Store } from "./store.js";
 
 // constants
 var SETTING_ACTIVE = "active";
@@ -20,7 +20,7 @@ const TABS_QUERY = { discarded: false, autoDiscardable: true };
 // globals
 var tabs = {}; // list of tabIDs with inactivity time
 var ticker = null;
-var store = {};
+let store = null;
 
 // park idle tab if it is not parked yet
 function parkTab(tabId) {
@@ -40,14 +40,18 @@ function parkTab(tabId) {
 }
 
 // simple timer - update inactivity time, unload timeouted tabs
-function tick() {
+async function tick() {
   console.debug("tick");
-  ticker = setTimeout(tick, store.get(SETTING_TICK) * 1000);
+  const {
+    [SETTING_PINNED]: skipPinned,
+    [SETTING_TICK]: tickTime,
+    [SETTING_TIMEOUT]: tabTimeout
+  } = await store.get([SETTING_PINNED, SETTING_TICK, SETTING_TIMEOUT]);
 
-  chrome.tabs.query(TABS_QUERY, fetchedTabs => {
+  ticker = setTimeout(tick, tickTime * 1000);
+
+  chrome.tabs.query(TABS_QUERY, async fetchedTabs => {
     // find active or pinned tabs to reset their time
-    const skipPinned = store.get(SETTING_PINNED);
-
     const activeTabs = new Set();
     fetchedTabs.forEach(tab => {
       if (tab.active || (skipPinned && tab.pinned)) {
@@ -56,8 +60,6 @@ function tick() {
     });
 
     // tick and find expired
-    const tickTime = store.get(SETTING_TICK);
-    const tabTimeout = store.get(SETTING_TIMEOUT);
     Object.keys(tabs).forEach(key => {
       const tab = tabs[key];
 
@@ -75,7 +77,7 @@ function tick() {
 }
 
 // init function
-function init() {
+async function init() {
   // load exclusion list
   // get all windows with tabs
   chrome.tabs.query(TABS_QUERY, fetchedTabs => {
@@ -90,7 +92,8 @@ function init() {
     title: chrome.i18n.getMessage("browserActionActive")
   });
 
-  ticker = setTimeout(tick, store.get(SETTING_TICK) * 1000);
+  const { [SETTING_TICK]: tickTime } = await store.get(SETTING_TICK);
+  ticker = setTimeout(tick, tickTime * 1000);
 }
 
 // Events
@@ -113,7 +116,7 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId) {
 });
 
 // UI
-chrome.browserAction.onClicked.addListener(function() {
+chrome.browserAction.onClicked.addListener(async function() {
   console.debug("Extension icon clicked");
 
   if (ticker) {
@@ -125,9 +128,9 @@ chrome.browserAction.onClicked.addListener(function() {
     chrome.browserAction.setTitle({
       title: chrome.i18n.getMessage("browserActionInactive")
     });
-    store.set(SETTING_ACTIVE, false);
+    await store.set({ [SETTING_ACTIVE]: false });
   } else {
-    store.set(SETTING_ACTIVE, true);
+    await store.set({ [SETTING_ACTIVE]: true });
     init();
   }
 
@@ -135,14 +138,16 @@ chrome.browserAction.onClicked.addListener(function() {
 });
 
 // starter
-function start() {
-  store = new Store("settings", DEFAULT_SETTINGS);
+async function start() {
+  store = new Store(DEFAULT_SETTINGS);
+  await store.ready();
 
-  if (store.get(SETTING_ACTIVE)) {
-    init();
-  } else {
-    chrome.browserAction.setIcon({ path: "img/icon19_off.png" });
+  const { [SETTING_ACTIVE]: isActive } = await store.get(SETTING_ACTIVE);
+  if (!isActive) {
+    return chrome.browserAction.setIcon({ path: "img/icon19_off.png" });
   }
+
+  init();
 }
 
 start();

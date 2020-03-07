@@ -11,7 +11,7 @@ export default [
     plugins: [resolve(), commonjs()]
   },
   {
-    input: "src/store-old.js",
+    input: "src/store.js",
     output: {
       file: "build/store.js",
       format: "iife",
