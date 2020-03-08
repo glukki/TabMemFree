@@ -8,7 +8,7 @@
     "ext:build:static": "cd extension/ && cp -R skeleton/* build",
     "ext:build:version": "cd extension/build && dot-json manifest.json version $npm_package_version",
     "ext:build:dynamic": "cd extension/ && rollup --config",
-    "ext:release": "npm run ext:build && cd extension/build && jszip -o \"../release/$npm_package_name-$npm_package_version.zip\" ./*",
+    "ext:release": "npm run ext:build && cd extension/build && folder-zip-sync \"./\" \"../release/$npm_package_name-$npm_package_version.zip\"",
     "prepush": "npm run test:eslint",
     "precommit": "pretty-quick --staged",
     "test:eslint": "eslint --format=node_modules/eslint-formatter-pretty ."
@@ -33,8 +33,8 @@
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-promise": "^3.8.0",
+    "folder-zip-sync": "^1.0.5",
     "husky": "^0.14.3",
-    "jszip-cli": "^1.4.24",
     "prettier": "1.13.7",
     "pretty-quick": "^1.6.0",
     "rollup": "^2.0.0"
