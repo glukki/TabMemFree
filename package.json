@@ -3,15 +3,20 @@
   "version": "0.3.1",
   "description": "TabMemFree is a Chrome extension that reduce CPU/MEM load by \"parking\" inactive tabs",
   "scripts": {
-    "ext:build": "npm run ext:build:cleanup && npm run ext:build:static && npm run ext:build:dynamic && npm run ext:build:version",
+    "ext:build": "npm run ext:build:cleanup && npm run ext:build:static && npm run ext:build:version && npm run ext:build:dynamic",
     "ext:build:cleanup": "cd extension/ && rm -R build; mkdir -p build; mkdir -p release",
     "ext:build:static": "cd extension/ && cp -R skeleton/* build",
     "ext:build:version": "cd extension/build && dot-json manifest.json version $npm_package_version",
     "ext:build:dynamic": "cd extension/ && rollup --config",
+    "ext:watch": "npm run ext:build && cd extension/ && rollup src/background.js --file build/background.js --format iife --watch",
     "ext:release": "npm run ext:build && cd extension/build && folder-zip-sync \"./\" \"../release/$npm_package_name-$npm_package_version.zip\"",
-    "prepush": "npm run test:eslint",
-    "precommit": "pretty-quick --staged",
     "test:eslint": "eslint --format=node_modules/eslint-formatter-pretty ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "npm run test:eslint"
+    }
   },
   "repository": {
     "type": "git",
@@ -26,18 +31,18 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-node-resolve": "^7.1.1",
-    "dot-json": "^1.0.4",
-    "eslint": "^5.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-formatter-pretty": "^1.3.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-prettier": "^2.6.2",
-    "eslint-plugin-promise": "^3.8.0",
+    "dot-json": "^1.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-formatter-pretty": "^3.0.1",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-promise": "^4.2.1",
     "folder-zip-sync": "^1.0.5",
-    "husky": "^0.14.3",
-    "prettier": "1.13.7",
-    "pretty-quick": "^1.6.0",
-    "rollup": "^2.0.0"
+    "husky": "^4.2.3",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
+    "rollup": "^2.1.0"
   },
   "dependencies": {
     "chrome-promise": "^3.0.5"
