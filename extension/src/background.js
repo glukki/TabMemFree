@@ -1,5 +1,3 @@
-/*jslint browser: true, devel: true*/
-/*global chrome*/
 /* eslint no-console: ["error", { allow: ["debug"] }] */
 
 import { Store } from "./store.js";

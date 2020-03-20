@@ -10,7 +10,10 @@ var Store = function(name, defaults) {
 
   if (defaults !== undefined) {
     for (key in defaults) {
-      if (defaults.hasOwnProperty(key) && this.get(key) === undefined) {
+      if (
+        Object.prototype.hasOwnProperty.call(defaults, key) &&
+        this.get(key) === undefined
+      ) {
         this.set(key, defaults[key]);
       }
     }
@@ -90,7 +93,7 @@ Store.prototype.fromObject = function(values, merge) {
     this.removeAll();
   }
   for (var key in values) {
-    if (values.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(values, key)) {
       this.set(key, values[key]);
     }
   }
